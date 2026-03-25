@@ -18,5 +18,31 @@ CHIP DMux8Way {
     OUT a, b, c, d, e, f, g, h;
 
     PARTS:
-    //// Replace this comment with your code.
+    Not(in=sel[0], out=notSel0);
+    Not(in=sel[1], out=notSel1);
+    Not(in=sel[2], out=notSel2);
+
+    // Generate all 8 combinations of sel signals
+    And(a=notSel0, b=notSel1, out=notSel0NotSel1);
+    And(a=sel[0], b=notSel1, out=sel0NotSel1);
+    And(a=notSel0, b=sel[1], out=notSel0Sel1);
+    And(a=sel[0], b=sel[1], out=sel0Sel1);
+
+    And(a=notSel0NotSel1, b=notSel2, out=notSel0NotSel1NotSel2);   // 000 -> a
+    And(a=sel0NotSel1, b=notSel2, out=sel0NotSel1NotSel2);         // 001 -> b
+    And(a=notSel0Sel1, b=notSel2, out=notSel0Sel1NotSel2);         // 010 -> c
+    And(a=sel0Sel1, b=notSel2, out=sel0Sel1NotSel2);               // 011 -> d
+    And(a=notSel0NotSel1, b=sel[2], out=notSel0NotSel1Sel2);       // 100 -> e
+    And(a=sel0NotSel1, b=sel[2], out=sel0NotSel1Sel2);             // 101 -> f
+    And(a=notSel0Sel1, b=sel[2], out=notSel0Sel1Sel2);             // 110 -> g
+    And(a=sel0Sel1, b=sel[2], out=sel0Sel1Sel2);                   // 111 -> h
+
+    And(a=in, b=notSel0NotSel1NotSel2, out=a);
+    And(a=in, b=sel0NotSel1NotSel2, out=b);
+    And(a=in, b=notSel0Sel1NotSel2, out=c);
+    And(a=in, b=sel0Sel1NotSel2, out=d);
+    And(a=in, b=notSel0NotSel1Sel2, out=e);
+    And(a=in, b=sel0NotSel1Sel2, out=f);
+    And(a=in, b=notSel0Sel1Sel2, out=g);
+    And(a=in, b=sel0Sel1Sel2, out=h);
 }
