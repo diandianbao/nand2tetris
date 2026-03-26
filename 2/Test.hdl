@@ -1,0 +1,7 @@
+CHIP Test {
+    IN in;
+    OUT out;
+
+    PARTS:
+    Mux(a=false, b=true, sel=in, out=out);
+}
