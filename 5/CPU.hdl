@@ -32,5 +32,12 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
-	//// Replace this comment with your code.
+    Mux16(a=instruction, b=outM, sel=instruction[15], out=mux161out);
+    Register(in=mux161out, load=true, out=aregisterout);
+
+    Mux16(a=aregisterout, b=inM, sel=mux16bc, out=mux16bout);
+    Register(in=outM, load=true, out=dregisterout);
+
+    PC(in=aregisterout, reset=reset,inc=true, load=pcc, out=pc);
+    ALU(x=dregisterout, y=mux16bout, zx=,nx=,zy=,ny=,f=,no=,out=outM, zr=,ng=);
 }
