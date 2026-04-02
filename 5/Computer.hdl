@@ -18,5 +18,19 @@ CHIP Computer {
     IN reset;
 
     PARTS:
-    //// Replace this comment with your code.
+    // 1. 程序存储器 (ROM)
+    // 输入：CPU 提供的 PC（15位）
+    // 输出：该地址对应的 16位指令 (instruction)
+    ROM32K(address=pc, out=instruction);
+
+    // 2. 中央处理器 (CPU)
+    // 输入：来自 ROM 的指令，来自 Memory 的数据，以及外部复位信号
+    // 输出：outM(写往内存的数据), writeM(写使能), addressM(写往哪个地址), pc(下一条指令地址)
+    CPU(inM=inM, instruction=instruction, reset=reset,
+        outM=outM, writeM=writeM, addressM=addressM, pc=pc);
+
+    // 3. 数据存储器 (Memory: 包含 RAM, Screen, Keyboard)
+    // 输入：CPU 输出的数据、地址和写使能信号
+    // 输出：供给 CPU 的输入数据 (inM)
+    Memory(in=outM, load=writeM, address=addressM, out=inM);
 }

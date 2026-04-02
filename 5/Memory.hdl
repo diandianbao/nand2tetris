@@ -25,5 +25,19 @@ CHIP Memory {
     OUT out[16];
 
     PARTS:
-	
+    // 1. 使用 DMux4Way 根据最高两位 (address[13..14]) 分发 load 信号
+    // address[14] 是最高位，决定是 RAM 还是 (Screen/KBD)
+    DMux4Way(in=load, sel=address[13..14], a=loadRam1, b=loadRam2, c=loadScreen, d=loadKbd);
+
+    // 因为 RAM16K 占据了整个前 16K (sel=00 和 01)
+    // 所以只要 sel 的最高位是 0，就应该写 RAM
+    Or(a=loadRam1, b=loadRam2, out=loadRam);
+
+    // 2. 真正的硬件组件
+    RAM16K(in=in, load=loadRam, address=address[0..13], out=outRam);
+    Screen(in=in, load=loadScreen, address=address[0..12], out=outScreen);
+    Keyboard(out=outKbd);
+
+    // 3. 使用 Mux4Way16 根据地址汇聚输出结果
+    Mux4Way16(a=outRam, b=outRam, c=outScreen, d=outKbd, sel=address[13..14], out=out);
 }
